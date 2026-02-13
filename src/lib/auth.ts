@@ -15,15 +15,20 @@ export const removeAuthToken = () => {
 
 export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   const token = getAuthToken();
-  const headers = {
+  const headers: any = {
     ...options.headers,
-    "Authorization": `Bearer ${token}`,
     "Accept": "application/json",
     "Content-Type": "application/json",
   };
 
-  // Remplacement systématique pour éviter les bugs CORS Windows
-  const fixedUrl = url.replace("localhost", "127.0.0.1");
+  // Si on a un token Bearer, on l'ajoute
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
-  return fetch(fixedUrl, { ...options, headers });
+  return fetch(url, { 
+    ...options, 
+    headers,
+    credentials: 'include' // TRÈS IMPORTANT : Autorise l'envoi des cookies de session
+  });
 };

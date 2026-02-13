@@ -7,7 +7,7 @@ import { Activity, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { fetchWithAuth, removeAuthToken } from "@/lib/auth";
+import { fetchWithAuth, removeAuthToken, setAuthToken } from "@/lib/auth";
 
 export default function DashboardLayout({
   children,
@@ -19,27 +19,40 @@ export default function DashboardLayout({
 
   useEffect(() => {
     const loadUser = async () => {
+      // 1. Extraire le token s'il est présent dans l'URL (retour de Google)
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenFromUrl = urlParams.get('token');
+      
+      if (tokenFromUrl) {
+        setAuthToken(tokenFromUrl);
+        // On force un rechargement propre pour que tous les composants utilisent le nouveau token
+        window.location.href = "/dashboard";
+        return;
+      }
+
       try {
-        const response = await fetchWithAuth("http://127.0.0.1:8000/api/me");
+        const response = await fetchWithAuth("http://localhost:8000/api/me");
         if (response.ok) {
           const data = await response.json();
           setUser(data);
         } else {
-          router.push("/login");
+          window.location.href = "/login";
         }
       } catch (error) {
         console.error("Erreur chargement utilisateur:", error);
-        router.push("/login");
+        window.location.href = "/login";
       }
     };
 
     loadUser();
-  }, [router]);
+  }, []); // Retrait de router pour éviter les boucles, navigation via window.location
 
   const handleLogout = async () => {
-    await fetchWithAuth("http://localhost:8000/api/logout", { method: "POST" });
+    try {
+      await fetchWithAuth("http://localhost:8000/api/logout", { method: "POST" });
+    } catch (e) {}
     removeAuthToken();
-    router.push("/login");
+    window.location.href = "/login";
   };
 
   if (!user) {
@@ -83,7 +96,7 @@ export default function DashboardLayout({
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <div className="ml-auto flex items-center gap-4">
              <span className="text-sm font-medium hidden md:inline-block">
-               {user.name} ({user.profile?.height}cm)
+               {user.name}
              </span>
             <Avatar>
               <AvatarImage src="" />
