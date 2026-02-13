@@ -81,12 +81,6 @@ export default function DashboardLayout({
             Tableau de Bord
           </Link>
           <Link
-            href="/tracker"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Tracker GPS
-          </Link>
-          <Link
             href="/nutrition"
             className="text-muted-foreground transition-colors hover:text-foreground"
           >

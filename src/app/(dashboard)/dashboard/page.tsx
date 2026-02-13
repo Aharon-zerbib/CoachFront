@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { 
-  Activity, Footprints, Map as MapIcon, Utensils, Zap, Clock, 
+  Activity, Footprints, Utensils, Zap, Clock, 
   Moon, Scale, Heart, Droplets, Thermometer, ChevronRight, Info
 } from "lucide-react";
 import Link from "next/link";
@@ -167,7 +167,7 @@ export default function DashboardPage() {
               <Progress value={((h?.activity?.steps || 0) / 10000) * 100} className="h-1" />
             </div>
             <div className="flex gap-4 pt-2 border-t text-xs">
-              <span className="flex items-center gap-1"><MapIcon className="h-3 w-3" /> {h?.activity?.distance ?? 0} km</span>
+              <span className="flex items-center gap-1"><Footprints className="h-3 w-3" /> {h?.activity?.distance ?? 0} km</span>
               <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {h?.activity?.active_minutes ?? 0} min</span>
             </div>
           </CardContent>
